@@ -6,14 +6,22 @@ const verifyAndGenerateAuthToken = async function (req, res) {
   try {
     let { phone, password } = req.body;
     let user_details = await getUserDetailsByPhone(phone);
-    let user_password = user_details.password;
-    let isPwdValid = await decryptPassword(password, user_password);
-    let token = "";
-    if (isPwdValid) {
-      token = await generateAuthToken(user_details.id, user_details.phone);
-      res.status(200).send({ token, message: "Authorised" });
+    if (user_details) {
+      let user_password = user_details.password;
+      let isPwdValid = await decryptPassword(password, user_password);
+      let token = "";
+      if (isPwdValid) {
+        token = await generateAuthToken(user_details.id, user_details.phone);
+        res.status(200).send({ token, message: "Authorised" });
+      } else {
+        res
+          .status(401)
+          .send({ message: "Either of your phone or password is invalid" });
+      }
     } else {
-      res.status(401).send({ message: "Either of your phone or password is invalid" });
+      res
+      .status(401)
+      .send({ message: "Either of your phone or password is invalid" });
     }
   } catch (error) {
     throw error;
