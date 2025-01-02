@@ -85,7 +85,12 @@ async function getTotalAmountSpentInMonth(month_no) {
       (
       	SELECT amount, to_char(date::TIMESTAMP, 'MM') mon
       	FROM expenses WHERE is_deleted = 0 
-      	AND to_char(date::TIMESTAMP, 'MM') = '${month_no}' 
+      	AND 
+        (to_char(date::TIMESTAMP, 'MM') = '${
+          month_no != 0 ? month_no.toString().length > 1 ? month_no : "0" + month_no : 12
+        }' 
+        AND
+		    to_char(date::TIMESTAMP, 'YYYY') = '${month_no != 0 ? new Date().getFullYear() : ((new Date().getFullYear())-1) }')
       	ORDER BY date DESC
       )q
       GROUP BY q.mon`);
