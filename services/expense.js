@@ -124,6 +124,7 @@ try {
   let resp = await sequelize.query(`SELECT date, SUM(amount) amount, COUNT(*) total_expenses FROM expenses WHERE is_deleted = 0 AND 
     ( 
       to_char(date::TIMESTAMP, 'MM') = '${month_number.length>1?month_number:'0'+month_number}'
+      AND
       to_char(date::TIMESTAMP, 'YYYY') = to_char(now()::TIMESTAMP, 'YYYY') 
     ) 
     GROUP BY date ORDER BY date DESC`);
