@@ -9,7 +9,8 @@ async function addNewExpense(
   description,
   date,
   created_by,
-  updated_by
+  updated_by,
+  tag
 ) {
   try {
     return await Expense.create({
@@ -20,6 +21,7 @@ async function addNewExpense(
       date,
       created_by,
       updated_by,
+      tag
     });
   } catch (error) {
     throw error;

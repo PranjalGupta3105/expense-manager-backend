@@ -45,7 +45,7 @@ const expenseTypeDef = /* GraphQL */
   }
 
   type Mutation {
-      createExpense(source_id: Int, source: String, method_id: Int, method: String, amount: Float, description: String, date: String): Expense 
+      createExpense(source_id: Int, source: String, method_id: Int, method: String, amount: Float, description: String, date: String, tag: String): Expense 
       deleteExpense(ids: [Int]): deleteExpenseObject
   }
 `

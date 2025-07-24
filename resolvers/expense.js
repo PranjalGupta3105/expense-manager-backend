@@ -18,7 +18,7 @@ const expense_resolvers = {
     // parent, argument, context
     createExpense: async (
       _,
-      { source_id, method_id, amount, description, date },
+      { source_id, method_id, amount, description, date, tag },
       { logged_userid }
     ) =>
       await addNewExpense(
@@ -28,7 +28,8 @@ const expense_resolvers = {
         description,
         date,
         logged_userid,
-        logged_userid
+        logged_userid,
+        tag
       ),
     deleteExpense: async (_, { ids }, { logged_userid }) => {
       let expenses = await getExpensesOwners(ids);
