@@ -43,6 +43,19 @@ const Expense = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    is_repayed: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    tag: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    category_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    }
   },
   { timeStamps: false, underscored: true }
 );
