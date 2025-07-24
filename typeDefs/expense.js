@@ -34,6 +34,9 @@ const expenseTypeDef = /* GraphQL */
     user: User
     updated_by: Int
     is_deleted: Int
+    is_repayed: Int
+    tag: String 
+    category_id: Int
   }
 
   type deleteExpenseObject {
