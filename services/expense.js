@@ -105,7 +105,7 @@ async function getTotalAmountSpentInMonth(month_no) {
 async function getTotalAmountSpent() {
   try {
     let resp = await sequelize.query(`
-      SELECT SUM(amount) total_amount FROM expenses WHERE is_deleted = 0`);
+      SELECT SUM(amount) total_amount FROM expenses WHERE is_deleted = 0 AND is_repayed = 0`);
       return resp[0][0].total_amount
   } catch (error) {
     throw error;
