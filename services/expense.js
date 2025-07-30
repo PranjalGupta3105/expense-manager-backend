@@ -50,20 +50,34 @@ async function getExpensesDetailsById(expense_id) {
   }
 }
 
-async function updateAnExpense(expense_id) {
+async function updateAnExpense(
+  expense_id,
+  source_id,
+  method_id,
+  amount,
+  description,
+  date,
+  created_by,
+  updated_by,
+  tag,
+  is_repayed
+) {
   try {
-    return await Expense.update(
-      {
-        source_id,
-        method_id,
-        amount,
-        description,
-        date,
-        created_by,
-        updated_by,
-      },
-      { where: { id: expense_id } }
-    );
+    const updateFields = {};
+    if (source_id !== undefined) updateFields.source_id = source_id;
+    if (method_id !== undefined) updateFields.method_id = method_id;
+    if (amount !== undefined) updateFields.amount = amount;
+    if (description !== undefined) updateFields.description = description;
+    if (date !== undefined) updateFields.date = date;
+    if (created_by !== undefined) updateFields.created_by = created_by;
+    if (updated_by !== undefined) updateFields.updated_by = updated_by;
+    if (tag !== undefined) updateFields.tag = tag;
+    if (is_repayed !== undefined) updateFields.is_repayed = is_repayed;
+
+    if (Object.keys(updateFields).length > 0) {
+      updateFields.updated_at = new Date();
+      return await Expense.update(updateFields, { where: { id: expense_id } });
+    }
   } catch (error) {
     throw error;
   }

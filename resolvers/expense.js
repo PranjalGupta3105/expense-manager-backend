@@ -60,6 +60,14 @@ const expense_resolvers = {
           message: "Cannot delete since you do not own these expense's",
         };
     },
+    updateExpense: async (
+      _,
+      { id, source_id, method_id, amount, description, date, created_by, updated_by, tag, is_repayed },
+      { logged_userid }
+    ) => {
+      const updateResult = await updateAnExpense(id, source_id, method_id, amount, description, date, created_by, updated_by, tag, is_repayed);
+      return await getExpensesDetailsById(id);
+    },
   },
   Query: {
     expenses: async () => await getAllExpenses(1),
