@@ -96,7 +96,7 @@ async function deleteExpenses(expense_ids) {
 async function getTotalAmountSpentInMonth(month_no) {
   try {
     let resp = await sequelize.query(`
-      SELECT SUM(q.amount) total_amount
+      SELECT COALESCE(SUM(q.amount),0) total_amount
       FROM 
       (
       	SELECT amount, to_char(date::TIMESTAMP, 'MM') mon
@@ -108,8 +108,7 @@ async function getTotalAmountSpentInMonth(month_no) {
         AND
 		    to_char(date::TIMESTAMP, 'YYYY') = '${month_no != 0 ? new Date().getFullYear() : ((new Date().getFullYear())-1) }')
       	ORDER BY date DESC
-      )q
-      GROUP BY q.mon`);
+      )q`);
       return resp[0][0].total_amount
   } catch (error) {
     throw error;
