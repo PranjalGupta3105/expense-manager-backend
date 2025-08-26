@@ -5,6 +5,7 @@ const expenseTypeDef = /* GraphQL */
       total_spends: Float!
       total_amount_in_mon(mon_no: Int): Float!
       date_wise_expenses(mon_no: Int): [DateExpenses]
+      activePaymentCardsDetails: [PaymentCardDetails]
   }
 
   type ExpenseArray {
@@ -42,6 +43,14 @@ const expenseTypeDef = /* GraphQL */
   type deleteExpenseObject {
     deleted_expenses: [Expense]
     message: String
+  }
+
+  type PaymentCardDetails {
+    id: Int
+    name: String
+    source_name: String
+    statement_date: String
+    renewal_date: String
   }
 
   type Mutation {

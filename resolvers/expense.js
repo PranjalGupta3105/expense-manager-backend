@@ -7,7 +7,8 @@ const {
   getTotalAmountSpentInMonth,
   getTotalAmountSpent,
   getExpensesOwners,
-  getExpensesDateWise
+  getExpensesDateWise,
+  getActivePaymentCardsDetails,
 } = require("../services/expense");
 const { getPaymentSourceById } = require("../services/sources");
 const { getPaymentMethodById } = require("../services/method");
@@ -73,7 +74,10 @@ const expense_resolvers = {
     expenses: async () => await getAllExpenses(1),
     total_amount_in_mon: async (_, { mon_no }) => await getTotalAmountSpentInMonth(mon_no),
     total_spends: async () => await getTotalAmountSpent(),
-    date_wise_expenses: async (_, { mon_no }) => await getExpensesDateWise(mon_no)
+    date_wise_expenses: async (_, { mon_no }) => await getExpensesDateWise(mon_no),
+    activePaymentCardsDetails: async () => {
+      return await getActivePaymentCardsDetails();
+    },
   },
   Expense: {
     source: async (expense) => await getPaymentSourceById(expense.source_id),

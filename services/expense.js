@@ -149,6 +149,36 @@ try {
 }
 }
 
+async function getActivePaymentCardsDetails() {
+  try {
+    const query = `
+      SELECT 
+        pc.id,
+        pc.name,
+        ps.name AS source_name,
+        pc.statement_date,
+        (
+          CASE 
+            WHEN pc.renewal_date != 0 THEN CONCAT(
+              pc.renewal_date, '/',
+              (CASE WHEN pc.renewal_mon > 9 THEN pc.renewal_mon::varchar ELSE CONCAT('0', pc.renewal_mon) END)
+            )
+            ELSE 'NA'
+          END
+        ) AS renewal_date
+      FROM payment_cards pc
+      LEFT JOIN payment_methods pm ON pc.method_id = pm.id
+      LEFT JOIN payment_sources ps ON pc.source_id = ps.id
+      WHERE pc.is_active = 1 AND pc.method_id <> 3
+      ORDER BY pc.statement_date ASC
+    `;
+    const [results] = await sequelize.query(query);
+    return results;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   addNewExpense,
   updateAnExpense,
@@ -158,5 +188,6 @@ module.exports = {
   getTotalAmountSpentInMonth,
   getTotalAmountSpent,
   getExpensesOwners,
-  getExpensesDateWise
+  getExpensesDateWise,
+  getActivePaymentCardsDetails
 };
