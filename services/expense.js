@@ -157,13 +157,14 @@ async function getActivePaymentCardsDetails() {
         pc.name,
         ps.name AS source_name,
         pc.statement_date,
+        pc.renewal_amount,
         (
           CASE 
             WHEN pc.renewal_date != 0 THEN CONCAT(
               pc.renewal_date, '/',
               (CASE WHEN pc.renewal_mon > 9 THEN pc.renewal_mon::varchar ELSE CONCAT('0', pc.renewal_mon) END)
             )
-            ELSE 'NA'
+            ELSE 'Free'
           END
         ) AS renewal_date
       FROM payment_cards pc

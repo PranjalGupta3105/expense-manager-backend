@@ -51,6 +51,7 @@ const expenseTypeDef = /* GraphQL */
     source_name: String
     statement_date: String
     renewal_date: String
+    renewal_amount: String
   }
 
   type Mutation {
