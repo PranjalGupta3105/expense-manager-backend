@@ -221,13 +221,14 @@ async function getActivePaymentCardsDetails() {
   }
 }
 
-async function getExpenseEachDayInCurWeek(tag_value) {
+async function getExpenseEachDayInCurWeek(tag_value = null) {
   try {
+    const tag_query = tag_value && tag_value != '' ? `tag = '${tag_value}' AND -- filter expenses tagged as '<tag_value>'`: '';
     const query = `
     SELECT COUNT(*) transactions_count, SUM(amount) amount, date, to_char(date, 'Dy') day_name
     FROM expenses
     WHERE 
-      tag = '${tag_value}' AND -- filter expenses tagged as '<tag_value>'
+      ${tag_query}
       is_deleted = 0 AND
       date >= date_trunc('week', now()) AND  -- having date starting the week start date
       date < date_trunc('week', now()) + INTERVAL '1 week' AND -- having date ending the week end date
@@ -243,7 +244,7 @@ async function getExpenseEachDayInCurWeek(tag_value) {
 
 async function getExpensePerWeekInCurMon(tag_value = null) {
   try {
-    const tag_query = tag_value ? `tag = '${tag_value}' AND` : ``;
+    const tag_query = tag_value && tag_value != '' ? `tag = '${tag_value}' AND -- filter expenses tagged as '<tag_value>' if provided` : ``;
     const query = `
       SELECT 
       COUNT(*) AS transactions_count,
@@ -253,7 +254,7 @@ async function getExpensePerWeekInCurMon(tag_value = null) {
       to_char(DATE_TRUNC('week', date), 'IW') AS week_number  -- ISO week number
       FROM expenses
       WHERE 
-        ${tag_query}  -- filter expenses tagged as '<tag_value>' if provided
+        ${tag_query}
         is_deleted = 0 AND
         EXTRACT(YEAR FROM date) = 2025 AND     -- choose year
         EXTRACT(MONTH FROM date) = 9        -- choose month (e.g., Sept)
@@ -268,7 +269,7 @@ async function getExpensePerWeekInCurMon(tag_value = null) {
 
 async function getExpensePerMonInCurYear(tag_value = null) {
   try {
-    const tag_query = tag_value ? `tag = '${tag_value}' AND` : ``;
+    const tag_query = tag_value && tag_value != '' ? `tag = '${tag_value}' AND   -- filter expenses tagged as '<tag_value>' if provided` : ``;
     const query = `
       SELECT 
       COUNT(*) AS transactions_count,
@@ -277,7 +278,7 @@ async function getExpensePerMonInCurYear(tag_value = null) {
       TO_CHAR(date, 'Month') AS month_name
       FROM expenses
       WHERE 
-        ${tag_query}  -- filter expenses tagged as '<tag_value>' if provided
+        ${tag_query}
         is_deleted = 0 AND
         EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE)  -- current year only
       GROUP BY DATE_TRUNC('month', date), TO_CHAR(date, 'Month')
