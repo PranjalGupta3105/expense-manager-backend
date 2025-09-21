@@ -9,6 +9,9 @@ const {
   getExpensesOwners,
   getExpensesDateWise,
   getActivePaymentCardsDetails,
+  getExpenseEachDayInCurWeek,
+  getExpensePerWeekInCurMon,
+  getExpensePerMonInCurYear,
 } = require("../services/expense");
 const { getPaymentSourceById } = require("../services/sources");
 const { getPaymentMethodById } = require("../services/method");
@@ -77,6 +80,15 @@ const expense_resolvers = {
     date_wise_expenses: async (_, { mon_no }) => await getExpensesDateWise(mon_no),
     activePaymentCardsDetails: async () => {
       return await getActivePaymentCardsDetails();
+    },
+     expenseEachDayInCurWeek: async (_, { tag_value }) => {
+      return await getExpenseEachDayInCurWeek(tag_value);
+    },
+    expensePerWeekInCurMon: async (_, { tag_value }) => {
+      return await getExpensePerWeekInCurMon(tag_value);
+    },
+    expensePerMonInCurYear: async (_, { tag_value }) => {
+      return await getExpensePerMonInCurYear(tag_value);
     },
   },
   Expense: {
