@@ -52,12 +52,42 @@ const expenseTypeDef = /* GraphQL */
     statement_date: String
     renewal_date: String
     renewal_amount: String
+    fee_waiver_amount: String
+    amount_spent_since_renewal: String
   }
 
   type Mutation {
       createExpense(source_id: Int, source: String, method_id: Int, method: String, amount: Float, description: String, date: String, tag: String): Expense 
       updateExpense(id: Int!, source_id: Int, method_id: Int, amount: Float, description: String, date: String, created_by: Int, updated_by: Int, tag: String, is_repayed: Int): Expense
       deleteExpense(ids: [Int]): deleteExpenseObject
+  }
+
+  type ExpenseDaySummary {
+    transactions_count: Int
+    amount: Float
+    date: String
+    day_name: String
+  }
+
+  type ExpenseWeekSummary {
+    transactions_count: Int
+    total_amount: Float
+    week_start: String
+    week_end: String
+    week_number: String
+  }
+
+  type ExpenseMonthSummary {
+    transactions_count: Int
+    total_amount: Float
+    month_start: String
+    month_name: String
+  }
+
+  extend type Query {
+    expenseEachDayInCurWeek(tag_value: String): [ExpenseDaySummary]
+    expensePerWeekInCurMon(tag_value: String): [ExpenseWeekSummary]
+    expensePerMonInCurYear(tag_value: String): [ExpenseMonthSummary]
   }
 `
 module.exports = expenseTypeDef
