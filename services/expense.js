@@ -232,7 +232,7 @@ async function getExpenseEachDayInCurWeek(tag_value = null) {
       ${tag_query}
       is_deleted = 0 AND
       date >= date_trunc('week', now()) AND  -- having date starting the week start date
-      date < date_trunc('week', now()) + INTERVAL '1 week' AND -- having date ending the week end date
+      -- AND date < date_trunc('week', now()) + INTERVAL '1 week' -- having date ending the week end date
       EXTRACT(DOW FROM date) BETWEEN 1 AND 5 -- and also between Mon to Fri only
     GROUP BY date
     ORDER BY date;`;
