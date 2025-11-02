@@ -257,8 +257,8 @@ async function getExpensePerWeekInCurMon(tag_value = null) {
       WHERE 
         ${tag_query}
         is_deleted = 0 AND
-        EXTRACT(YEAR FROM date) = 2025 AND     -- choose year
-        EXTRACT(MONTH FROM date) = 9        -- choose month (e.g., Sept)
+        EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE)  -- current year only AND
+        EXTRACT(MONTH FROM date) = EXTRACT(MONTH FROM CURRENT_DATE)  -- current month only
       GROUP BY DATE_TRUNC('week', date)
       ORDER BY week_start;`;
     const [results] = await sequelize.query(query);
