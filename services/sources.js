@@ -1,4 +1,6 @@
 const paymentSource = require("../models/source");
+const paymentCards = require("../models/cards");
+const { sequelize } = require("../config/database");
 
 const getPaymentSourceById = async function (id) {
   try {
@@ -49,10 +51,34 @@ const updatePaymentSource = async function (id, name) {
     }
 }
 
+const getCCPaymentSources = async function () {
+  try {
+    let payment_sources = (await paymentCards.findAll({
+      attributes: ["id", ["name", "card_name"], "source_id", 
+      [sequelize.col("payment_source.name"), "issuing_bank"],
+      [sequelize.literal(4), "method_id"]
+      ],
+      where: { is_active: 1, method_id: 4 },
+      raw: true,
+      include: [
+        {
+          model: paymentSource,
+          as: "payment_source",
+          attributes: [],
+        },
+      ],
+    }));
+    return payment_sources;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   getPaymentSourceById,
   getAllPaymentSources,
   addNewPaymentSource,
   deletePaymentSource,
-  updatePaymentSource
+  updatePaymentSource,
+  getCCPaymentSources,
 };

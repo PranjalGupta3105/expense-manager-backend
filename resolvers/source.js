@@ -3,6 +3,7 @@ const {
   getAllPaymentSources,
   deletePaymentSource,
   updatePaymentSource,
+  getCCPaymentSources,
 } = require("../services/sources");
 const payment_source_resolver = {
   Mutation: {
@@ -13,6 +14,7 @@ const payment_source_resolver = {
   },
   Query: {
     sources: async () => await getAllPaymentSources(),
+    ccSources: async () => await getCCPaymentSources(),
   },
 };
 
