@@ -12,6 +12,7 @@ const {
   getExpenseEachDayInCurWeek,
   getExpensePerWeekInCurMon,
   getExpensePerMonInCurYear,
+  addNewExpenseV2,
 } = require("../services/expense");
 const { getPaymentSourceById } = require("../services/sources");
 const { getPaymentMethodById } = require("../services/method");
@@ -22,19 +23,34 @@ const expense_resolvers = {
     // parent, argument, context
     createExpense: async (
       _,
-      { source_id, method_id, amount, description, date, tag },
+      { source_id, method_id, amount, description, date, tag, card_id },
       { logged_userid }
-    ) =>
-      await addNewExpense(
-        source_id,
-        method_id,
-        amount,
-        description,
-        date,
-        logged_userid,
-        logged_userid,
-        tag
-      ),
+    ) =>{
+      // If the card_id is provided, use the V2 function to include it and create an expense with card association
+      if (card_id)
+        await addNewExpenseV2(
+          source_id,
+          method_id,
+          amount,
+          description,
+          date,
+          logged_userid,
+          logged_userid,
+          tag,
+          card_id,
+        );
+      else
+        await addNewExpense(
+          source_id,
+          method_id,
+          amount,
+          description,
+          date,
+          logged_userid,
+          logged_userid,
+          tag,
+        );
+    },
     deleteExpense: async (_, { ids }, { logged_userid }) => {
       let expenses = await getExpensesOwners(ids);
       let expense_owners_array = expenses.map((exp) =>

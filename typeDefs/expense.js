@@ -38,6 +38,7 @@ const expenseTypeDef = /* GraphQL */
     is_repayed: Int
     tag: String 
     category_id: Int
+    card_id: Int
   }
 
   type deleteExpenseObject {
@@ -57,7 +58,7 @@ const expenseTypeDef = /* GraphQL */
   }
 
   type Mutation {
-      createExpense(source_id: Int, source: String, method_id: Int, method: String, amount: Float, description: String, date: String, tag: String): Expense 
+      createExpense(source_id: Int, source: String, method_id: Int, method: String, amount: Float, description: String, date: String, tag: String, card_id: Int): Expense
       updateExpense(id: Int!, source_id: Int, method_id: Int, amount: Float, description: String, date: String, created_by: Int, updated_by: Int, tag: String, is_repayed: Int): Expense
       deleteExpense(ids: [Int]): deleteExpenseObject
   }

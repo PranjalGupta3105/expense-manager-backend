@@ -291,6 +291,35 @@ async function getExpensePerMonInCurYear(tag_value = null) {
   }
 }
 
+async function addNewExpenseV2(
+  source_id,
+  method_id,
+  amount,
+  description,
+  date,
+  created_by,
+  updated_by,
+  tag,
+  card_id
+) {
+  try {
+    return await Expense.create({
+      source_id,
+      method_id,
+      amount,
+      description,
+      date,
+      created_by,
+      updated_by,
+      tag,
+      card_id
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+
 module.exports = {
   addNewExpense,
   updateAnExpense,
@@ -305,5 +334,5 @@ module.exports = {
   getExpenseEachDayInCurWeek,
   getExpensePerWeekInCurMon,
   getExpensePerMonInCurYear,
-
+  addNewExpenseV2,
 };

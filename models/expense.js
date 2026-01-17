@@ -8,7 +8,7 @@ const Expense = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
     },
     source_id: {
       type: DataTypes.INTEGER,
@@ -31,9 +31,9 @@ const Expense = sequelize.define(
       allowNull: false,
     },
     is_deleted: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
     },
     created_by: {
       type: DataTypes.INTEGER,
@@ -46,7 +46,7 @@ const Expense = sequelize.define(
     is_repayed: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
     },
     tag: {
       type: DataTypes.STRING,
@@ -55,9 +55,18 @@ const Expense = sequelize.define(
     category_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
-    }
+    },
+    card_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+      references: {
+        model: "payment_cards",
+        key: "id",
+      },
+    },
   },
-  { timeStamps: false, underscored: true }
+  { timeStamps: false, underscored: true },
 );
 
 sequelize
