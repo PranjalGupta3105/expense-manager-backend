@@ -1,5 +1,6 @@
 const { sequelize } = require("../config/database")
 const { DataTypes } = require("sequelize");
+const paymentCards = require("./cards");
 
 const Expense = sequelize.define(
   "expenses",
@@ -77,5 +78,12 @@ sequelize
   .catch((error) => {
     console.error("Unable to create table : ", error);
   });
+
+Expense.hasOne(paymentCards, {
+  sourceKey: 'card_id',
+  foreignKey: 'id',
+  as: 'payment_cards'
+});
+
 
 module.exports = Expense;

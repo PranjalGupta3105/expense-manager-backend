@@ -1,6 +1,7 @@
 const Expense = require("../models/expense");
 const { Op, Sequelize } = require("sequelize");
 const { sequelize } = require("../config/database");
+const paymentCards = require("../models/cards");
 
 async function addNewExpense(
   source_id,
@@ -32,13 +33,37 @@ async function getAllExpenses(user_id) {
   try {
     let expenses = await Expense.findAndCountAll({
       where: { created_by: user_id, is_deleted: 0 },
+      attributes: [
+        "id",
+        "source_id",
+        "method_id",
+        "amount",
+        "description",
+        "date",
+        "created_by",
+        "updated_by",
+        "is_deleted",
+        "is_repayed",
+        "tag",
+        "category_id",
+        "card_id",
+        [sequelize.col("payment_cards.name"), "card_name"]
+      ],
+      raw: true,
+      include: [
+        {
+          model: paymentCards,
+          as: "payment_cards",
+          attributes: [],
+        },
+      ],
       order: [
         ["date", "DESC"],
         ["id", "DESC"],
       ],
     });
     if (expenses.count > 0)
-      return { rows: expenses.rows, count: expenses.count };
+       return { rows: expenses.rows, count: expenses.count };
     else return { rows: [], count: 0 };
   } catch (error) {
     throw error;
