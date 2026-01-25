@@ -13,6 +13,7 @@ const {
   getExpensePerWeekInCurMon,
   getExpensePerMonInCurYear,
   addNewExpenseV2,
+  updateAnExpenseV2
 } = require("../services/expense");
 const { getPaymentSourceById } = require("../services/sources");
 const { getPaymentMethodById } = require("../services/method");
@@ -82,10 +83,40 @@ const expense_resolvers = {
     },
     updateExpense: async (
       _,
-      { id, source_id, method_id, amount, description, date, created_by, updated_by, tag, is_repayed },
+      { id, source_id, method_id, amount, description, date, created_by, updated_by, tag, is_repayed, card_id },
       { logged_userid }
     ) => {
-      const updateResult = await updateAnExpense(id, source_id, method_id, amount, description, date, created_by, updated_by, tag, is_repayed);
+      let updateResult;
+      if (card_id) {
+        // Call the V2 function if card_id is provided
+        updateResult = await updateAnExpenseV2(
+          id,
+          source_id,
+          method_id,
+          amount,
+          description,
+          date,
+          created_by,
+          updated_by,
+          tag,
+          is_repayed,
+          card_id,
+        );
+      } else {
+        // Present for backend compatibility
+        updateResult = await updateAnExpense(
+          id,
+          source_id,
+          method_id,
+          amount,
+          description,
+          date,
+          created_by,
+          updated_by,
+          tag,
+          is_repayed,
+        );
+      }
       return await getExpensesDetailsById(id);
     },
   },
