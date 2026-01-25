@@ -47,7 +47,7 @@ async function getAllExpenses(user_id) {
         "tag",
         "category_id",
         "card_id",
-        [sequelize.col("payment_cards.name"), "card_name"]
+        [sequelize.col("payment_cards.name"), "card_name"],
       ],
       raw: true,
       include: [
@@ -344,6 +344,41 @@ async function addNewExpenseV2(
   }
 }
 
+async function updateAnExpenseV2(
+  expense_id,
+  source_id,
+  method_id,
+  amount,
+  description,
+  date,
+  created_by,
+  updated_by,
+  tag,
+  is_repayed,
+  card_id
+) {
+  try {
+    const updateFields = {};
+    if (source_id !== undefined) updateFields.source_id = source_id;
+    if (method_id !== undefined) updateFields.method_id = method_id;
+    if (amount !== undefined) updateFields.amount = amount;
+    if (description !== undefined) updateFields.description = description;
+    if (date !== undefined) updateFields.date = date;
+    if (created_by !== undefined) updateFields.created_by = created_by;
+    if (updated_by !== undefined) updateFields.updated_by = updated_by;
+    if (tag !== undefined) updateFields.tag = tag;
+    if (is_repayed !== undefined) updateFields.is_repayed = is_repayed;
+    if (card_id !== undefined) updateFields.card_id = card_id;
+
+    if (Object.keys(updateFields).length > 0) {
+      updateFields.updated_at = new Date();
+      return await Expense.update(updateFields, { where: { id: expense_id } });
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
 
 module.exports = {
   addNewExpense,
@@ -360,4 +395,5 @@ module.exports = {
   getExpensePerWeekInCurMon,
   getExpensePerMonInCurYear,
   addNewExpenseV2,
+  updateAnExpenseV2
 };
