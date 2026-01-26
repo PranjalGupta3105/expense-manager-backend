@@ -251,7 +251,7 @@ async function getExpenseEachDayInCurWeek(tag_value = null) {
     const tag_query = tag_value && tag_value != '' ? `tag = '${tag_value}' AND -- filter expenses tagged as '<tag_value>'`: '';
     const query = `
     SELECT COUNT(*) transactions_count, 
-    FLOOR(SUM(amount)) amount, date, to_char(date, 'Dy') day_name
+    FLOOR(SUM(amount)) amount, to_char(date, 'YYYY-MM-DD') AS date, to_char(date, 'Dy') day_name
     FROM expenses
     WHERE 
       ${tag_query}
