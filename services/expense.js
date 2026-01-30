@@ -1,5 +1,5 @@
 const Expense = require("../models/expense");
-const { Op, Sequelize } = require("sequelize");
+const { Op, fn, col, where } = require("sequelize");
 const { sequelize } = require("../config/database");
 const paymentCards = require("../models/cards");
 
@@ -11,7 +11,7 @@ async function addNewExpense(
   date,
   created_by,
   updated_by,
-  tag
+  tag,
 ) {
   try {
     return await Expense.create({
@@ -29,41 +29,88 @@ async function addNewExpense(
   }
 }
 
-async function getAllExpenses(user_id) {
+async function getAllExpenses(user_id, from_date, to_date) {
   try {
-    let expenses = await Expense.findAndCountAll({
-      where: { created_by: user_id, is_deleted: 0 },
-      attributes: [
-        "id",
-        "source_id",
-        "method_id",
-        "amount",
-        "description",
-        "date",
-        "created_by",
-        "updated_by",
-        "is_deleted",
-        "is_repayed",
-        "tag",
-        "category_id",
-        "card_id",
-        [sequelize.col("payment_cards.name"), "card_name"],
-      ],
-      raw: true,
-      include: [
-        {
-          model: paymentCards,
-          as: "payment_cards",
-          attributes: [],
+    let expenses = null;
+    if (!from_date || !to_date) {
+      expenses = await Expense.findAndCountAll({
+        where: {
+          created_by: user_id,
+          is_deleted: 0,
         },
-      ],
-      order: [
-        ["date", "DESC"],
-        ["id", "DESC"],
-      ],
-    });
+        attributes: [
+          "id",
+          "source_id",
+          "method_id",
+          "amount",
+          "description",
+          "date",
+          "created_by",
+          "updated_by",
+          "is_deleted",
+          "is_repayed",
+          "tag",
+          "category_id",
+          "card_id",
+          [sequelize.col("payment_cards.name"), "card_name"],
+        ],
+        raw: true,
+        include: [
+          {
+            model: paymentCards,
+            as: "payment_cards",
+            attributes: [],
+          },
+        ],
+        order: [
+          ["date", "DESC"],
+          ["id", "DESC"],
+        ],
+      });
+    } else {
+      expenses = await Expense.findAndCountAll({
+        where: {
+          created_by: user_id,
+          is_deleted: 0,
+          [Op.and]: [
+            where(fn("DATE", col("date")), {
+              [Op.gte]: from_date,
+              [Op.lte]: to_date,
+            }),
+          ],
+        },
+        attributes: [
+          "id",
+          "source_id",
+          "method_id",
+          "amount",
+          "description",
+          "date",
+          "created_by",
+          "updated_by",
+          "is_deleted",
+          "is_repayed",
+          "tag",
+          "category_id",
+          "card_id",
+          [sequelize.col("payment_cards.name"), "card_name"],
+        ],
+        raw: true,
+        include: [
+          {
+            model: paymentCards,
+            as: "payment_cards",
+            attributes: [],
+          },
+        ],
+        order: [
+          ["date", "DESC"],
+          ["id", "DESC"],
+        ],
+      });
+    }
     if (expenses.count > 0)
-       return { rows: expenses.rows, count: expenses.count };
+      return { rows: expenses.rows, count: expenses.count };
     else return { rows: [], count: 0 };
   } catch (error) {
     throw error;
@@ -88,7 +135,7 @@ async function updateAnExpense(
   created_by,
   updated_by,
   tag,
-  is_repayed
+  is_repayed,
 ) {
   try {
     const updateFields = {};
@@ -115,7 +162,7 @@ async function deleteExpenses(expense_ids) {
   try {
     await Expense.update(
       { is_deleted: 1 },
-      { where: { id: { [Op.in]: expense_ids } } }
+      { where: { id: { [Op.in]: expense_ids } } },
     );
     let updated_expenses = await Expense.findAll({
       where: { id: { [Op.in]: expense_ids } },
@@ -248,7 +295,10 @@ async function getActivePaymentCardsDetails() {
 
 async function getExpenseEachDayInCurWeek(tag_value = null) {
   try {
-    const tag_query = tag_value && tag_value != '' ? `tag = '${tag_value}' AND -- filter expenses tagged as '<tag_value>'`: '';
+    const tag_query =
+      tag_value && tag_value != ""
+        ? `tag = '${tag_value}' AND -- filter expenses tagged as '<tag_value>'`
+        : "";
     const query = `
     SELECT COUNT(*) transactions_count, 
     FLOOR(SUM(amount)) amount, to_char(date, 'YYYY-MM-DD') AS date, to_char(date, 'Dy') day_name
@@ -270,7 +320,10 @@ async function getExpenseEachDayInCurWeek(tag_value = null) {
 
 async function getExpensePerWeekInCurMon(tag_value = null) {
   try {
-    const tag_query = tag_value && tag_value != '' ? `tag = '${tag_value}' AND -- filter expenses tagged as '<tag_value>' if provided` : ``;
+    const tag_query =
+      tag_value && tag_value != ""
+        ? `tag = '${tag_value}' AND -- filter expenses tagged as '<tag_value>' if provided`
+        : ``;
     const query = `
       SELECT 
       COUNT(*) AS transactions_count,
@@ -295,7 +348,10 @@ async function getExpensePerWeekInCurMon(tag_value = null) {
 
 async function getExpensePerMonInCurYear(tag_value = null) {
   try {
-    const tag_query = tag_value && tag_value != '' ? `tag = '${tag_value}' AND   -- filter expenses tagged as '<tag_value>' if provided` : ``;
+    const tag_query =
+      tag_value && tag_value != ""
+        ? `tag = '${tag_value}' AND   -- filter expenses tagged as '<tag_value>' if provided`
+        : ``;
     const query = `
       SELECT 
       COUNT(*) AS transactions_count,
@@ -325,7 +381,7 @@ async function addNewExpenseV2(
   created_by,
   updated_by,
   tag,
-  card_id
+  card_id,
 ) {
   try {
     return await Expense.create({
@@ -337,7 +393,7 @@ async function addNewExpenseV2(
       created_by,
       updated_by,
       tag,
-      card_id
+      card_id,
     });
   } catch (error) {
     throw error;
@@ -355,7 +411,7 @@ async function updateAnExpenseV2(
   updated_by,
   tag,
   is_repayed,
-  card_id
+  card_id,
 ) {
   try {
     const updateFields = {};
@@ -379,7 +435,6 @@ async function updateAnExpenseV2(
   }
 }
 
-
 module.exports = {
   addNewExpense,
   updateAnExpense,
@@ -395,5 +450,5 @@ module.exports = {
   getExpensePerWeekInCurMon,
   getExpensePerMonInCurYear,
   addNewExpenseV2,
-  updateAnExpenseV2
+  updateAnExpenseV2,
 };
