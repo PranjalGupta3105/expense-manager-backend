@@ -25,8 +25,8 @@ const expense_resolvers = {
     createExpense: async (
       _,
       { source_id, method_id, amount, description, date, tag, card_id },
-      { logged_userid }
-    ) =>{
+      { logged_userid },
+    ) => {
       // If the card_id is provided, use the V2 function to include it and create an expense with card association
       if (card_id)
         await addNewExpenseV2(
@@ -55,7 +55,7 @@ const expense_resolvers = {
     deleteExpense: async (_, { ids }, { logged_userid }) => {
       let expenses = await getExpensesOwners(ids);
       let expense_owners_array = expenses.map((exp) =>
-        parseInt(exp.created_by)
+        parseInt(exp.created_by),
       );
       const allEqual = (arr) => arr.every((val) => val === arr[0]);
       if (expense_owners_array.length == ids.length)
@@ -83,8 +83,20 @@ const expense_resolvers = {
     },
     updateExpense: async (
       _,
-      { id, source_id, method_id, amount, description, date, created_by, updated_by, tag, is_repayed, card_id },
-      { logged_userid }
+      {
+        id,
+        source_id,
+        method_id,
+        amount,
+        description,
+        date,
+        created_by,
+        updated_by,
+        tag,
+        is_repayed,
+        card_id,
+      },
+      { logged_userid },
     ) => {
       let updateResult;
       if (card_id) {
@@ -121,14 +133,16 @@ const expense_resolvers = {
     },
   },
   Query: {
-    expenses: async () => await getAllExpenses(1),
-    total_amount_in_mon: async (_, { mon_no }) => await getTotalAmountSpentInMonth(mon_no),
+    expenses: async (_, { from_date, to_date }) => await getAllExpenses(1, from_date, to_date),
+    total_amount_in_mon: async (_, { mon_no }) =>
+      await getTotalAmountSpentInMonth(mon_no),
     total_spends: async () => await getTotalAmountSpent(),
-    date_wise_expenses: async (_, { mon_no }) => await getExpensesDateWise(mon_no),
+    date_wise_expenses: async (_, { mon_no }) =>
+      await getExpensesDateWise(mon_no),
     activePaymentCardsDetails: async () => {
       return await getActivePaymentCardsDetails();
     },
-     expenseEachDayInCurWeek: async (_, { tag_value }) => {
+    expenseEachDayInCurWeek: async (_, { tag_value }) => {
       return await getExpenseEachDayInCurWeek(tag_value);
     },
     expensePerWeekInCurMon: async (_, { tag_value }) => {

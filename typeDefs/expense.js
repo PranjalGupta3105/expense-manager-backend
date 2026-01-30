@@ -1,7 +1,7 @@
 const expenseTypeDef = /* GraphQL */ 
 `
   type Query {
-      expenses: ExpenseArray
+      expenses(from_date: String, to_date: String): ExpenseArray
       total_spends: Float!
       total_amount_in_mon(mon_no: Int): Float!
       date_wise_expenses(mon_no: Int): [DateExpenses]
