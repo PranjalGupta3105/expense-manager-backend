@@ -29,86 +29,74 @@ async function addNewExpense(
   }
 }
 
-async function getAllExpenses(user_id, from_date, to_date) {
+async function getAllExpenses(user_id, search_param, from_date, to_date) {
   try {
     let expenses = null;
-    if (!from_date || !to_date) {
-      expenses = await Expense.findAndCountAll({
-        where: {
-          created_by: user_id,
-          is_deleted: 0,
-        },
-        attributes: [
-          "id",
-          "source_id",
-          "method_id",
-          "amount",
-          "description",
-          "date",
-          "created_by",
-          "updated_by",
-          "is_deleted",
-          "is_repayed",
-          "tag",
-          "category_id",
-          "card_id",
-          [sequelize.col("payment_cards.name"), "card_name"],
-        ],
-        raw: true,
-        include: [
-          {
-            model: paymentCards,
-            as: "payment_cards",
-            attributes: [],
-          },
-        ],
-        order: [
-          ["date", "DESC"],
-          ["id", "DESC"],
-        ],
-      });
-    } else {
-      expenses = await Expense.findAndCountAll({
-        where: {
-          created_by: user_id,
-          is_deleted: 0,
-          [Op.and]: [
-            where(fn("DATE", col("date")), {
-              [Op.gte]: from_date,
-              [Op.lte]: to_date,
-            }),
-          ],
-        },
-        attributes: [
-          "id",
-          "source_id",
-          "method_id",
-          "amount",
-          "description",
-          "date",
-          "created_by",
-          "updated_by",
-          "is_deleted",
-          "is_repayed",
-          "tag",
-          "category_id",
-          "card_id",
-          [sequelize.col("payment_cards.name"), "card_name"],
-        ],
-        raw: true,
-        include: [
-          {
-            model: paymentCards,
-            as: "payment_cards",
-            attributes: [],
-          },
-        ],
-        order: [
-          ["date", "DESC"],
-          ["id", "DESC"],
-        ],
-      });
+
+    let whereCondition = { created_by: user_id, is_deleted: 0 };
+
+    if (search_param) {
+      if (search_param.trim() !== "") {
+        try {
+          const parsedNumber = parseFloat(search_param);
+          if (!isNaN(parsedNumber) && parsedNumber > 0) {
+            whereCondition[Op.or] = [{ amount: parsedNumber }];
+          } else {
+            whereCondition[Op.or] = [
+              { description: { [Op.ilike]: `%${search_param}%` } },
+              { tag: { [Op.ilike]: `%${search_param}%` } },
+            ];
+          }
+        } catch (error) {
+          whereCondition[Op.or] = [
+            { description: { [Op.ilike]: `%${search_param}%` } },
+            { tag: { [Op.ilike]: `%${search_param}%` } },
+          ];
+        }
+      }
     }
+
+    if (from_date && to_date) {
+      whereCondition[Op.and] = [
+        where(fn("DATE", col("date")), {
+          [Op.gte]: from_date,
+          [Op.lte]: to_date,
+        }),
+      ];
+    }
+
+    expenses = await Expense.findAndCountAll({
+      where: whereCondition,
+      attributes: [
+        "id",
+        "source_id",
+        "method_id",
+        "amount",
+        "description",
+        "date",
+        "created_by",
+        "updated_by",
+        "is_deleted",
+        "is_repayed",
+        "tag",
+        "category_id",
+        "card_id",
+        [sequelize.col("payment_cards.name"), "card_name"],
+      ],
+      raw: true,
+      include: [
+        {
+          model: paymentCards,
+          as: "payment_cards",
+          attributes: [],
+        },
+      ],
+      order: [
+        ["date", "DESC"],
+        ["id", "DESC"],
+      ],
+    });
+
     if (expenses.count > 0)
       return { rows: expenses.rows, count: expenses.count };
     else return { rows: [], count: 0 };
