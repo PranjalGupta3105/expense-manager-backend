@@ -1,0 +1,26 @@
+name: Deploy Expense Manager Backend Code
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deploy Via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ubuntu
+          key: ${{ secrets.KEY }}
+          debug: true
+          script: |
+            cd /home/ubuntu/expense-manager-backend
+            git pull origin development
+            /home/ubuntu/.nvm/versions/node/v23.2.0/bin/pm2 restart server
