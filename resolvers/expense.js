@@ -133,7 +133,7 @@ const expense_resolvers = {
     },
   },
   Query: {
-    expenses: async (_, { from_date, to_date }) => await getAllExpenses(1, from_date, to_date),
+    expenses: async (_, { search_param, from_date, to_date }) => await getAllExpenses(1, search_param, from_date, to_date),
     total_amount_in_mon: async (_, { mon_no }) =>
       await getTotalAmountSpentInMonth(mon_no),
     total_spends: async () => await getTotalAmountSpent(),
