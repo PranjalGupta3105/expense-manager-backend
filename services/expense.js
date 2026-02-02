@@ -43,8 +43,8 @@ async function getAllExpenses(user_id, search_param, from_date, to_date) {
             whereCondition[Op.or] = [{ amount: parsedNumber }];
           } else {
             whereCondition[Op.or] = [
-              { description: { [Op.ilike]: `%${search_param}%` } },
-              { tag: { [Op.ilike]: `%${search_param}%` } },
+              { description: { [Op.iLike]: `%${search_param}%` } },
+              { tag: { [Op.iLike]: `%${search_param}%` } },
             ];
           }
         } catch (error) {
