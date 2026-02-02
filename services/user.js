@@ -16,7 +16,6 @@ async function createNewUser(
 ) {
   try {
     let encrypted_pwd = await encryptPassword(password);
-    console.log(`\nencrypted_pwd:\t${encrypted_pwd}\n`);
     return await User.create({
       first_name,
       last_name,
