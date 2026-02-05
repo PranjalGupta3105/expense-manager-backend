@@ -29,7 +29,14 @@ async function addNewExpense(
   }
 }
 
-async function getAllExpenses(user_id, search_param, from_date, to_date) {
+async function getAllExpenses(
+  page_no,
+  page_size,
+  user_id,
+  search_param,
+  from_date,
+  to_date,
+) {
   try {
     let expenses = null;
 
@@ -65,42 +72,85 @@ async function getAllExpenses(user_id, search_param, from_date, to_date) {
       ];
     }
 
-    expenses = await Expense.findAndCountAll({
-      where: whereCondition,
-      attributes: [
-        "id",
-        "source_id",
-        "method_id",
-        "amount",
-        "description",
-        "date",
-        "created_by",
-        "updated_by",
-        "is_deleted",
-        "is_repayed",
-        "tag",
-        "category_id",
-        "card_id",
-        [sequelize.col("payment_cards.name"), "card_name"],
-      ],
-      raw: true,
-      include: [
-        {
-          model: paymentCards,
-          as: "payment_cards",
-          attributes: [],
-        },
-      ],
-      order: [
-        ["date", "DESC"],
-        ["id", "DESC"],
-      ],
-    });
+    const offset = ((page_no && page_no > 0) && (page_size && page_size > 0)) ? (page_no - 1) * page_size : 0;
+    const limit = page_size ? page_size : 0;
+
+    console.log("whereCondition:", whereCondition);
+    console.log(`\noffset${offset}\t limit${limit}`);
+    
+
+    if (limit > 0)
+      expenses = await Expense.findAndCountAll({
+        where: whereCondition,
+        attributes: [
+          "id",
+          "source_id",
+          "method_id",
+          "amount",
+          "description",
+          "date",
+          "created_by",
+          "updated_by",
+          "is_deleted",
+          "is_repayed",
+          "tag",
+          "category_id",
+          "card_id",
+          [sequelize.col("payment_cards.name"), "card_name"],
+        ],
+        raw: true,
+        include: [
+          {
+            model: paymentCards,
+            as: "payment_cards",
+            attributes: [],
+          },
+        ],
+        limit,
+        offset,
+        order: [
+          ["date", "DESC"],
+          ["id", "DESC"],
+        ],
+      });
+    else
+      expenses = await Expense.findAndCountAll({
+        where: whereCondition,
+        attributes: [
+          "id",
+          "source_id",
+          "method_id",
+          "amount",
+          "description",
+          "date",
+          "created_by",
+          "updated_by",
+          "is_deleted",
+          "is_repayed",
+          "tag",
+          "category_id",
+          "card_id",
+          [sequelize.col("payment_cards.name"), "card_name"],
+        ],
+        raw: true,
+        include: [
+          {
+            model: paymentCards,
+            as: "payment_cards",
+            attributes: [],
+          },
+        ],
+        order: [
+          ["date", "DESC"],
+          ["id", "DESC"],
+        ],
+      });
 
     if (expenses.count > 0)
       return { rows: expenses.rows, count: expenses.count };
     else return { rows: [], count: 0 };
   } catch (error) {
+    console.log("Error in getAllExpenses service:", error);
     throw error;
   }
 }
