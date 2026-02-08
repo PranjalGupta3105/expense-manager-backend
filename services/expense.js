@@ -170,7 +170,6 @@ async function updateAnExpense(
   amount,
   description,
   date,
-  created_by,
   updated_by,
   tag,
   is_repayed,
@@ -182,7 +181,6 @@ async function updateAnExpense(
     if (amount !== undefined) updateFields.amount = amount;
     if (description !== undefined) updateFields.description = description;
     if (date !== undefined) updateFields.date = date;
-    if (created_by !== undefined) updateFields.created_by = created_by;
     if (updated_by !== undefined) updateFields.updated_by = updated_by;
     if (tag !== undefined) updateFields.tag = tag;
     if (is_repayed !== undefined) updateFields.is_repayed = is_repayed;
@@ -445,7 +443,6 @@ async function updateAnExpenseV2(
   amount,
   description,
   date,
-  created_by,
   updated_by,
   tag,
   is_repayed,
@@ -458,7 +455,6 @@ async function updateAnExpenseV2(
     if (amount !== undefined) updateFields.amount = amount;
     if (description !== undefined) updateFields.description = description;
     if (date !== undefined) updateFields.date = date;
-    if (created_by !== undefined) updateFields.created_by = created_by;
     if (updated_by !== undefined) updateFields.updated_by = updated_by;
     if (tag !== undefined) updateFields.tag = tag;
     if (is_repayed !== undefined) updateFields.is_repayed = is_repayed;
