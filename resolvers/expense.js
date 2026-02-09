@@ -133,7 +133,7 @@ const expense_resolvers = {
     },
   },
   Query: {
-    expenses: async (_, { page_no, page_size, search_param, from_date, to_date }) => await getAllExpenses(page_no, page_size, 1, search_param, from_date, to_date),
+    expenses: async (_, { page_no, page_size, search_param, from_date, to_date }, { logged_userid }) => await getAllExpenses(page_no, page_size, logged_userid, search_param, from_date, to_date), // instead of hard coded 1 how to get the value of req.logged_userid
     total_amount_in_mon: async (_, { mon_no }) =>
       await getTotalAmountSpentInMonth(mon_no),
     total_spends: async () => await getTotalAmountSpent(),

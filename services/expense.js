@@ -36,7 +36,7 @@ async function getAllExpenses(
   search_param,
   from_date,
   to_date,
-) {
+) {  
   try {
     let expenses = null;
 
@@ -74,10 +74,6 @@ async function getAllExpenses(
 
     const offset = ((page_no && page_no > 0) && (page_size && page_size > 0)) ? (page_no - 1) * page_size : 0;
     const limit = page_size ? page_size : 0;
-
-    console.log("whereCondition:", whereCondition);
-    console.log(`\noffset${offset}\t limit${limit}`);
-    
 
     if (limit > 0)
       expenses = await Expense.findAndCountAll({
