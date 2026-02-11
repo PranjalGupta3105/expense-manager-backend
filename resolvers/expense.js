@@ -90,8 +90,6 @@ const expense_resolvers = {
         amount,
         description,
         date,
-        created_by,
-        updated_by,
         tag,
         is_repayed,
         card_id,
@@ -99,37 +97,60 @@ const expense_resolvers = {
       { logged_userid },
     ) => {
       let updateResult;
-      if (card_id) {
-        // Call the V2 function if card_id is provided
-        updateResult = await updateAnExpenseV2(
-          id,
-          source_id,
-          method_id,
-          amount,
-          description,
-          date,
-          created_by,
-          updated_by,
-          tag,
-          is_repayed,
-          card_id,
-        );
-      } else {
-        // Present for backend compatibility
-        updateResult = await updateAnExpense(
-          id,
-          source_id,
-          method_id,
-          amount,
-          description,
-          date,
-          created_by,
-          updated_by,
-          tag,
-          is_repayed,
-        );
-      }
-      return await getExpensesDetailsById(id);
+
+      let expenses = await getExpensesOwners([id]);
+      let expense_owners_array = expenses.map((exp) =>
+        parseInt(exp.created_by),
+      );
+      const allEqual = (arr) => arr.every((val) => val === arr[0]);
+
+      if (expense_owners_array.length == ids.length)
+        if (allEqual(expense_owners_array)) {
+          if (expense_owners_array[0] != logged_userid) {
+            if (card_id) {
+              // Call the V2 function if card_id is provided
+              updateResult = await updateAnExpenseV2(
+                id,
+                source_id,
+                method_id,
+                amount,
+                description,
+                date,
+                logged_userid,
+                tag,
+                is_repayed,
+                card_id,
+              );
+            } else {
+              // Present for backend compatibility
+              updateResult = await updateAnExpense(
+                id,
+                source_id,
+                method_id,
+                amount,
+                description,
+                date,
+                logged_userid,
+                tag,
+                is_repayed,
+              );
+            }
+            return await getExpensesDetailsById(id);
+          } else
+            return {
+              deleted_expenses: [],
+              message: "Cannot update since you do not own these expense's",
+            };
+        } else
+          return {
+            deleted_expenses: [],
+            message: "Cannot update since you do not own these expense's",
+          };
+      else
+        return {
+          deleted_expenses: [],
+          message: "Cannot update since you do not own these expense's",
+        };
     },
   },
   Query: {
