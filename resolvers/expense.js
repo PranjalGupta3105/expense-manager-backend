@@ -103,10 +103,9 @@ const expense_resolvers = {
         parseInt(exp.created_by),
       );
       const allEqual = (arr) => arr.every((val) => val === arr[0]);
-
-      if (expense_owners_array.length == ids.length)
+      if (expense_owners_array.length == [id].length)
         if (allEqual(expense_owners_array)) {
-          if (expense_owners_array[0] != logged_userid) {
+          if (expense_owners_array[0] === logged_userid) {
             if (card_id) {
               // Call the V2 function if card_id is provided
               updateResult = await updateAnExpenseV2(
@@ -135,6 +134,7 @@ const expense_resolvers = {
                 is_repayed,
               );
             }
+
             return await getExpensesDetailsById(id);
           } else
             return {
