@@ -12,6 +12,7 @@ async function addNewExpense(
   created_by,
   updated_by,
   tag,
+  sub_category_id = null,
 ) {
   try {
     return await Expense.create({
@@ -23,6 +24,7 @@ async function addNewExpense(
       created_by,
       updated_by,
       tag,
+      sub_category_id,
     });
   } catch (error) {
     throw error;
@@ -169,6 +171,7 @@ async function updateAnExpense(
   updated_by,
   tag,
   is_repayed,
+  sub_category_id = null
 ) {
   try {
     const updateFields = {};
@@ -180,6 +183,9 @@ async function updateAnExpense(
     if (updated_by !== undefined) updateFields.updated_by = updated_by;
     if (tag !== undefined) updateFields.tag = tag;
     if (is_repayed !== undefined) updateFields.is_repayed = is_repayed;
+    if (sub_category_id !==  null && sub_category_id !== undefined) updateFields.sub_category_id = sub_category_id;
+
+    console.log("updateFields in updateAnExpense service:", JSON.stringify(updateFields));
 
     if (Object.keys(updateFields).length > 0) {
       updateFields.updated_at = new Date();
@@ -414,6 +420,7 @@ async function addNewExpenseV2(
   updated_by,
   tag,
   card_id,
+  sub_category_id = null
 ) {
   try {
     return await Expense.create({
@@ -426,6 +433,7 @@ async function addNewExpenseV2(
       updated_by,
       tag,
       card_id,
+      sub_category_id
     });
   } catch (error) {
     throw error;
@@ -443,6 +451,7 @@ async function updateAnExpenseV2(
   tag,
   is_repayed,
   card_id,
+  sub_category_id = null
 ) {
   try {
     const updateFields = {};
@@ -455,7 +464,9 @@ async function updateAnExpenseV2(
     if (tag !== undefined) updateFields.tag = tag;
     if (is_repayed !== undefined) updateFields.is_repayed = is_repayed;
     if (card_id !== undefined) updateFields.card_id = card_id;
+    if (sub_category_id !==  null && sub_category_id !== undefined) updateFields.sub_category_id = sub_category_id;
 
+    console.log("updateFields in updateAnExpenseV2 service:", JSON.stringify(updateFields));
     if (Object.keys(updateFields).length > 0) {
       updateFields.updated_at = new Date();
       return await Expense.update(updateFields, { where: { id: expense_id } });
