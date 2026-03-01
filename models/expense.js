@@ -53,7 +53,7 @@ const Expense = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    category_id: {
+    sub_category_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },

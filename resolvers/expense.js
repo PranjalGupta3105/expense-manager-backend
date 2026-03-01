@@ -24,7 +24,7 @@ const expense_resolvers = {
     // parent, argument, context
     createExpense: async (
       _,
-      { source_id, method_id, amount, description, date, tag, card_id },
+      { source_id, method_id, amount, description, date, tag, card_id, sub_category_id },
       { logged_userid },
     ) => {
       // If the card_id is provided, use the V2 function to include it and create an expense with card association
@@ -39,6 +39,7 @@ const expense_resolvers = {
           logged_userid,
           tag,
           card_id,
+          sub_category_id
         );
       else
         await addNewExpense(
@@ -50,6 +51,7 @@ const expense_resolvers = {
           logged_userid,
           logged_userid,
           tag,
+          sub_category_id
         );
     },
     deleteExpense: async (_, { ids }, { logged_userid }) => {
@@ -93,6 +95,7 @@ const expense_resolvers = {
         tag,
         is_repayed,
         card_id,
+        sub_category_id
       },
       { logged_userid },
     ) => {
@@ -119,6 +122,7 @@ const expense_resolvers = {
                 tag,
                 is_repayed,
                 card_id,
+                sub_category_id
               );
             } else {
               // Present for backend compatibility
@@ -132,6 +136,7 @@ const expense_resolvers = {
                 logged_userid,
                 tag,
                 is_repayed,
+                sub_category_id,
               );
             }
 
