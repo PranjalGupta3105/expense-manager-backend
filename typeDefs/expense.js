@@ -37,7 +37,7 @@ const expenseTypeDef = /* GraphQL */
     is_deleted: Int
     is_repayed: Int
     tag: String 
-    category_id: Int
+    sub_category_id: Int
     card_id: Int
     card_name: String
   }
