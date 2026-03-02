@@ -40,6 +40,8 @@ const expenseTypeDef = /* GraphQL */
     sub_category_id: Int
     card_id: Int
     card_name: String
+    sub_category_name: String
+    category_name: String
   }
 
   type deleteExpenseObject {
