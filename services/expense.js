@@ -2,6 +2,8 @@ const Expense = require("../models/expense");
 const { Op, fn, col, where } = require("sequelize");
 const { sequelize } = require("../config/database");
 const paymentCards = require("../models/cards");
+const TransactionSubCategory = require("../models/transaction_sub_category");
+const TransactionCategory = require("../models/transaction_category");
 
 async function addNewExpense(
   source_id,
@@ -95,6 +97,8 @@ async function getAllExpenses(
           "sub_category_id",
           "card_id",
           [sequelize.col("payment_cards.name"), "card_name"],
+          [sequelize.col("sub_category.name"), "sub_category_name"],
+          [sequelize.col("sub_category->transaction_category.name"), "category_name"],
         ],
         raw: true,
         include: [
@@ -102,6 +106,22 @@ async function getAllExpenses(
             model: paymentCards,
             as: "payment_cards",
             attributes: [],
+          },
+          {
+            model: TransactionSubCategory,
+            as: "sub_category",
+            left: true,
+            attributes: [],
+            required: false,
+            where: { is_deleted: 0 },
+            include: [
+              {
+                model: TransactionCategory,
+                as: "transaction_category",
+                attributes: ['name'],
+                where: { is_deleted: 0 },
+              },
+            ],
           },
         ],
         limit,
@@ -129,6 +149,8 @@ async function getAllExpenses(
           "sub_category_id",
           "card_id",
           [sequelize.col("payment_cards.name"), "card_name"],
+          [sequelize.col("sub_category.name"), "sub_category_name"],
+          [sequelize.col("sub_category->transaction_category.name"), "category_name"],
         ],
         raw: true,
         include: [
@@ -136,6 +158,22 @@ async function getAllExpenses(
             model: paymentCards,
             as: "payment_cards",
             attributes: [],
+          },
+          {
+            model: TransactionSubCategory,
+            as: "sub_category",
+            left: true,
+            attributes: [],
+            required: false,
+            where: { is_deleted: 0 },
+            include: [
+              {
+                model: TransactionCategory,
+                as: "transaction_category",
+                attributes: ['name'],
+                where: { is_deleted: 0 },
+              },
+            ],
           },
         ],
         order: [

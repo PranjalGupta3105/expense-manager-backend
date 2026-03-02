@@ -41,7 +41,7 @@ const TransactionSubCategory = sequelize.define('TransactionSubCategory', {
   timestamps: false,
 });
 
-TransactionSubCategory.belongsTo(TransactionCategory, { foreignKey: 'category_id' });
+TransactionSubCategory.belongsTo(TransactionCategory, { foreignKey: 'category_id', as: 'transaction_category' });
 TransactionCategory.hasMany(TransactionSubCategory, { foreignKey: 'category_id', as: 'subCategories' });
 
 module.exports = TransactionSubCategory;

@@ -1,6 +1,8 @@
 const { sequelize } = require("../config/database")
 const { DataTypes } = require("sequelize");
 const paymentCards = require("./cards");
+const TransactionSubCategory = require("./transaction_sub_category");
+
 
 const Expense = sequelize.define(
   "expenses",
@@ -83,6 +85,11 @@ Expense.hasOne(paymentCards, {
   sourceKey: 'card_id',
   foreignKey: 'id',
   as: 'payment_cards'
+});
+Expense.hasOne(TransactionSubCategory, {
+  sourceKey: 'sub_category_id',
+  foreignKey: 'id',
+  as: 'sub_category'
 });
 
 
