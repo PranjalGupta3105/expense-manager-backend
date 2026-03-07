@@ -5,6 +5,8 @@ const paymentCards = require("../models/cards");
 const TransactionSubCategory = require("../models/transaction_sub_category");
 const TransactionCategory = require("../models/transaction_category");
 
+const currentYear = new Date().getFullYear();
+
 async function addNewExpense(
   source_id,
   method_id,
@@ -369,8 +371,9 @@ async function getActivePaymentCardsDetails() {
   }
 }
 
-async function getExpenseEachDayInCurWeek(tag_value = null) {
+async function getExpenseEachDayInCurWeek(tag_value = null, transactions_year = currentYear) {
   try {
+
     const tag_query =
       tag_value && tag_value != ""
         ? `tag = '${tag_value}' AND -- filter expenses tagged as '<tag_value>'`
@@ -385,6 +388,7 @@ async function getExpenseEachDayInCurWeek(tag_value = null) {
       date >= date_trunc('week', now()) -- having date starting the week start date
       AND date < date_trunc('week', now()) + INTERVAL '1 week' -- having date ending the week end date
       -- AND EXTRACT(DOW FROM date) BETWEEN 1 AND 5 -- and also between Mon to Fri only
+      AND EXTRACT(YEAR FROM date) = ${transactions_year ? transactions_year.toString() : 'EXTRACT(YEAR FROM CURRENT_DATE)'} -- current year only
     GROUP BY date
     ORDER BY date;`;
     const [results] = await sequelize.query(query);
@@ -394,8 +398,9 @@ async function getExpenseEachDayInCurWeek(tag_value = null) {
   }
 }
 
-async function getExpensePerWeekInCurMon(tag_value = null) {
+async function getExpensePerWeekInCurMon(tag_value = null, transactions_year = currentYear) {
   try {
+
     const tag_query =
       tag_value && tag_value != ""
         ? `tag = '${tag_value}' AND -- filter expenses tagged as '<tag_value>' if provided`
@@ -411,7 +416,7 @@ async function getExpensePerWeekInCurMon(tag_value = null) {
       WHERE 
         ${tag_query}
         is_deleted = 0 AND
-        EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE) -- current year only AND
+        EXTRACT(YEAR FROM date) = ${transactions_year ? transactions_year.toString() : 'EXTRACT(YEAR FROM CURRENT_DATE)'} -- current year only AND
         AND EXTRACT(MONTH FROM date) = EXTRACT(MONTH FROM CURRENT_DATE)  -- current month only
       GROUP BY DATE_TRUNC('week', date)
       ORDER BY week_start;`;
@@ -422,8 +427,9 @@ async function getExpensePerWeekInCurMon(tag_value = null) {
   }
 }
 
-async function getExpensePerMonInCurYear(tag_value = null) {
+async function getExpensePerMonInCurYear(tag_value = null, transactions_year = currentYear) {
   try {
+    
     const tag_query =
       tag_value && tag_value != ""
         ? `tag = '${tag_value}' AND   -- filter expenses tagged as '<tag_value>' if provided`
@@ -438,7 +444,7 @@ async function getExpensePerMonInCurYear(tag_value = null) {
       WHERE 
         ${tag_query}
         is_deleted = 0 AND
-        EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE)  -- current year only
+        EXTRACT(YEAR FROM date) = ${transactions_year ? transactions_year.toString() : 'EXTRACT(YEAR FROM CURRENT_DATE)'}  -- current year only
       GROUP BY DATE_TRUNC('month', date), TO_CHAR(date, 'Month')
       ORDER BY month_start;`;
     const [results] = await sequelize.query(query);
