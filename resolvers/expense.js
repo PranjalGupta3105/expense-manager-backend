@@ -168,14 +168,14 @@ const expense_resolvers = {
     activePaymentCardsDetails: async () => {
       return await getActivePaymentCardsDetails();
     },
-    expenseEachDayInCurWeek: async (_, { tag_value }) => {
-      return await getExpenseEachDayInCurWeek(tag_value);
+    expenseEachDayInCurWeek: async (_, { tag_value, transactions_year }) => {
+      return await getExpenseEachDayInCurWeek(tag_value, transactions_year);
     },
-    expensePerWeekInCurMon: async (_, { tag_value }) => {
-      return await getExpensePerWeekInCurMon(tag_value);
+    expensePerWeekInCurMon: async (_, { tag_value, transactions_year }) => {
+      return await getExpensePerWeekInCurMon(tag_value, transactions_year);
     },
-    expensePerMonInCurYear: async (_, { tag_value }) => {
-      return await getExpensePerMonInCurYear(tag_value);
+    expensePerMonInCurYear: async (_, { tag_value, transactions_year }) => {
+      return await getExpensePerMonInCurYear(tag_value, transactions_year);
     },
   },
   Expense: {

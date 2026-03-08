@@ -89,9 +89,9 @@ const expenseTypeDef = /* GraphQL */
   }
 
   extend type Query {
-    expenseEachDayInCurWeek(tag_value: String): [ExpenseDaySummary]
-    expensePerWeekInCurMon(tag_value: String): [ExpenseWeekSummary]
-    expensePerMonInCurYear(tag_value: String): [ExpenseMonthSummary]
+    expenseEachDayInCurWeek(tag_value: String, transactions_year: Int): [ExpenseDaySummary]
+    expensePerWeekInCurMon(tag_value: String, transactions_year: Int): [ExpenseWeekSummary]
+    expensePerMonInCurYear(tag_value: String, transactions_year: Int): [ExpenseMonthSummary]
   }
 `
 module.exports = expenseTypeDef
