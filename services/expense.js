@@ -389,6 +389,7 @@ async function getExpenseEachDayInCurWeek(tag_value = null, transactions_year = 
       AND date < date_trunc('week', now()) + INTERVAL '1 week' -- having date ending the week end date
       -- AND EXTRACT(DOW FROM date) BETWEEN 1 AND 5 -- and also between Mon to Fri only
       AND EXTRACT(YEAR FROM date) = ${transactions_year ? transactions_year.toString() : 'EXTRACT(YEAR FROM CURRENT_DATE)'} -- current year only
+      AND sub_category_id IN (SELECT id FROM transaction_sub_categories WHERE category_id <> 7)
     GROUP BY date
     ORDER BY date;`;
     const [results] = await sequelize.query(query);
@@ -418,6 +419,7 @@ async function getExpensePerWeekInCurMon(tag_value = null, transactions_year = c
         is_deleted = 0 AND
         EXTRACT(YEAR FROM date) = ${transactions_year ? transactions_year.toString() : 'EXTRACT(YEAR FROM CURRENT_DATE)'} -- current year only AND
         AND EXTRACT(MONTH FROM date) = EXTRACT(MONTH FROM CURRENT_DATE)  -- current month only
+        AND sub_category_id IN (SELECT id FROM transaction_sub_categories WHERE category_id <> 7)
       GROUP BY DATE_TRUNC('week', date)
       ORDER BY week_start;`;
     const [results] = await sequelize.query(query);
@@ -445,6 +447,7 @@ async function getExpensePerMonInCurYear(tag_value = null, transactions_year = c
         ${tag_query}
         is_deleted = 0 AND
         EXTRACT(YEAR FROM date) = ${transactions_year ? transactions_year.toString() : 'EXTRACT(YEAR FROM CURRENT_DATE)'}  -- current year only
+        AND sub_category_id IN (SELECT id FROM transaction_sub_categories WHERE category_id <> 7)
       GROUP BY DATE_TRUNC('month', date), TO_CHAR(date, 'Month')
       ORDER BY month_start;`;
     const [results] = await sequelize.query(query);
